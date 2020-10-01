@@ -4,5 +4,8 @@ spl_autoload_register('getClassFile');
 
 function getClassFile($className)
 {
-    require_once "$className.php";
+    $classNameToArray = explode("\\",$className);
+    $className = end($classNameToArray);
+    require_once "core/$className.php";
 }
+

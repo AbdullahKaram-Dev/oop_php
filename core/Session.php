@@ -5,39 +5,36 @@ namespace Core;
 class Session
 {
 
-    public function get(string $key)
+    public function __construct()
     {
-      return  (! empty($_SESSION[$key]) ? $_SESSION[$key] : false);
-    }
-
-    public function set(string $key, $value)
-    {
-        return (isset($_SESSION) ? $_SESSION[$key] = $value : false);
-    }
-
-    public function has(string $key):bool
-    {
-        return (isset($_SESSION[$key]) ? true : false);
-    }
-
-    public function remove(string $key): bool
-    {
-        if (isset($_SESSION[$key])){
-
-            unset($_SESSION[$key]);
-
-            return true;
-
-        } else {
-
-            return false;
+        if (! session_id()){
+            session_start();
         }
 
     }
 
+    public function get(string $key)
+    {
+      return $result = $this->has($key) ? $_SESSION[$key] : null;
+    }
+
+    public function set(string $key, $value)
+    {
+        return  $_SESSION[$key] = $value;
+    }
+
+    public function has(string $key):bool
+    {
+        return isset($_SESSION[$key]);
+    }
+
+    public function remove(string $key)
+    {
+        unset($_SESSION[$key]);
+    }
+
     public function destroy()
     {
-        session_start();
         $_SESSION = array();
 
         if (ini_get("session.use_cookies")) {
@@ -50,9 +47,10 @@ class Session
         session_destroy();
     }
 
-    public function flash($key)
+    public function flash(string $key)
     {
-       echo $this->get($key);
-        $this->remove($key);
+       $value = $this->get($key);
+       $this->remove($key);
+       return $value;
     }
 }
